@@ -58,7 +58,7 @@ def parse_pigment_html(pigment_html):
     pigment_html = lxml.html.tostring(pigment_doc.xpath('//div[@id="detail"]')[0])
     pigment_html = pigment_html.decode("utf-8")
 
-    special_shipping = "Regular shipping, no restrictions." not in pigment_html
+    regular_shipping = "Regular shipping, no restrictions." in pigment_html
     prof_only = "Sold only to professional users" in pigment_html
     danger = "Signal word:" in pigment_html
 
@@ -66,7 +66,7 @@ def parse_pigment_html(pigment_html):
         "price": price,
         "mass": mass,
         "html": pigment_html,
-        "special_shipping": special_shipping,
+        "regular_shipping": regular_shipping,
         "prof_only": prof_only,
         "danger": danger,
     }
@@ -85,7 +85,7 @@ def search_pigment_with_keyword(
         x
         for x in all_pigments
         if keyword.casefold() in x["html"].casefold()
-        and (include_special_shipping or not x["special_shipping"])
+        and (include_special_shipping or x["regular_shipping"])
         and (include_prof_only or not x["prof_only"])
         and (include_danger_warning or not x["danger"])
         and (x["price"] is not None)
